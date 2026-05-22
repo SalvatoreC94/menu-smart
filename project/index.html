@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MenuSmart — Design Exploration</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" />
+
+  <style>
+    html, body { margin: 0; padding: 0; background: #f0eee9; }
+    body { font-family: "Geist", system-ui, sans-serif; color: #1a1612; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+  </style>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <!-- Data + libs -->
+  <script src="src/data.js"></script>
+  <script type="text/babel" src="lib/design-canvas.jsx"></script>
+  <script type="text/babel" src="lib/ios-frame.jsx"></script>
+  <script type="text/babel" src="lib/browser-window.jsx"></script>
+  <script type="text/babel" src="lib/tweaks-panel.jsx"></script>
+
+  <!-- Component files -->
+  <script type="text/babel" src="src/customer-landing.jsx"></script>
+  <script type="text/babel" src="src/customer-classic.jsx"></script>
+  <script type="text/babel" src="src/customer-visual.jsx"></script>
+  <script type="text/babel" src="src/customer-story.jsx"></script>
+  <script type="text/babel" src="src/dish-modal.jsx"></script>
+  <script type="text/babel" src="src/admin-dashboard.jsx"></script>
+  <script type="text/babel" src="src/admin-editor.jsx"></script>
+  <script type="text/babel" src="src/admin-auth.jsx"></script>
+  <script type="text/babel" src="src/admin-create-menu.jsx"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="env,react">
+    // ─── Palettes ───────────────────────────────────────────────
+    // The user gets to pick which one via the Tweaks panel.
+    const PALETTES = {
+      cream: {
+        name: 'Crema editoriale',
+        bg: '#faf7f2', surface: '#ffffff', ink: '#1a1612',
+        muted: '#7a6e5f', border: '#e8e0d3',
+        accent: '#3d4a2e', // deep olive
+      },
+      cinnabar: {
+        name: 'Cinabro caldo',
+        bg: '#f6efe6', surface: '#fbf6ed', ink: '#2a1a12',
+        muted: '#7a5a4a', border: '#e6d8c5',
+        accent: '#a8472b', // terracotta
+      },
+      notte: {
+        name: 'Notte',
+        bg: '#171411', surface: '#221d18', ink: '#f5ede0',
+        muted: '#a89884', border: '#3a3128',
+        accent: '#d4a755', // soft brass
+      },
+      sale: {
+        name: 'Sale & cobalto',
+        bg: '#f4f2ec', surface: '#ffffff', ink: '#0d1220',
+        muted: '#6e7080', border: '#dcdbd2',
+        accent: '#1f3a8a', // editorial cobalt
+      },
+    };
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "palette": "sale"
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const palette = PALETTES[t.palette] || PALETTES.cream;
+
+      return (
+        <>
+          <DesignCanvas minScale={0.1} maxScale={4}>
+
+            {/* ─── Section: Customer mobile experience ─── */}
+            <DCSection id="customer" title="Cliente · Esperienza mobile"
+              subtitle="Tre direzioni visive per il menu visto dal cliente al tavolo. QR landing + tre layout.">
+
+              <DCArtboard id="qr" label="00 · QR Landing" width={402} height={874}>
+                <IOSDevice width={402} height={874} dark={palette.bg === '#171411'}>
+                  <QRLanding palette={palette} lang="it" />
+                </IOSDevice>
+              </DCArtboard>
+
+              <DCArtboard id="classic" label="A · Editoriale classico" width={402} height={874}>
+                <IOSDevice width={402} height={874} dark={palette.bg === '#171411'}>
+                  <CustomerClassic palette={palette} lang="it" />
+                </IOSDevice>
+              </DCArtboard>
+
+              <DCArtboard id="visual" label="B · Griglia visiva" width={402} height={874}>
+                <IOSDevice width={402} height={874} dark={palette.bg === '#171411'}>
+                  <CustomerVisual palette={palette} lang="it" />
+                </IOSDevice>
+              </DCArtboard>
+
+              <DCArtboard id="story" label="C · Story (full bleed)" width={402} height={874}>
+                <IOSDevice width={402} height={874} dark={palette.bg === '#171411'}>
+                  <CustomerStory palette={palette} lang="it" />
+                </IOSDevice>
+              </DCArtboard>
+
+            </DCSection>
+
+            {/* ─── Section: Multilingual (same screen, different langs) ─── */}
+            <DCSection id="i18n" title="Cliente · Traduzioni multilingua"
+              subtitle="Stessa pagina del menu, quattro lingue. Il cliente sceglie all'avvio.">
+
+              <DCArtboard id="lang-it" label="Italiano" width={402} height={874}>
+                <IOSDevice width={402} height={874} dark={palette.bg === '#171411'}>
+                  <CustomerClassic palette={palette} lang="it" />
+                </IOSDevice>
+              </DCArtboard>
+              <DCArtboard id="lang-en" label="English" width={402} height={874}>
+                <IOSDevice width={402} height={874} dark={palette.bg === '#171411'}>
+                  <CustomerClassic palette={palette} lang="en" />
+                </IOSDevice>
+              </DCArtboard>
+              <DCArtboard id="lang-fr" label="Français" width={402} height={874}>
+                <IOSDevice width={402} height={874} dark={palette.bg === '#171411'}>
+                  <CustomerClassic palette={palette} lang="fr" />
+                </IOSDevice>
+              </DCArtboard>
+              <DCArtboard id="lang-de" label="Deutsch" width={402} height={874}>
+                <IOSDevice width={402} height={874} dark={palette.bg === '#171411'}>
+                  <CustomerClassic palette={palette} lang="de" />
+                </IOSDevice>
+              </DCArtboard>
+
+            </DCSection>
+
+            {/* ─── Section: Admin authentication ─── */}
+            <DCSection id="auth" title="Ristoratore · Autenticazione"
+              subtitle="Login per ristoratori esistenti, registrazione guidata per nuovi locali.">
+
+              <DCArtboard id="login" label="Login" width={1280} height={820}>
+                <ChromeWindow width={1280} height={820} url="menusmart.app/accedi"
+                  tabs={[{ title: 'MenuSmart · Accedi' }]}>
+                  <AdminLogin palette={palette} />
+                </ChromeWindow>
+              </DCArtboard>
+
+              <DCArtboard id="register" label="Registrazione · Wizard 4 step" width={1280} height={820}>
+                <ChromeWindow width={1280} height={820} url="menusmart.app/registrati"
+                  tabs={[{ title: 'MenuSmart · Crea il tuo workspace' }]}>
+                  <AdminRegister palette={palette} />
+                </ChromeWindow>
+              </DCArtboard>
+
+            </DCSection>
+
+            {/* ─── Section: Admin (desktop) ─── */}
+            <DCSection id="admin" title="Ristoratore · Pannello di gestione"
+              subtitle="Multi-menu, drag&drop, anteprima live, QR generator, analytics.">
+
+              <DCArtboard id="dashboard" label="Dashboard · Panoramica" width={1280} height={820}>
+                <ChromeWindow width={1280} height={820} url="menusmart.app/borgo/dashboard"
+                  tabs={[{ title: 'MenuSmart · Osteria del Borgo' }]}>
+                  <AdminDashboard palette={palette} />
+                </ChromeWindow>
+              </DCArtboard>
+
+              <DCArtboard id="editor" label="Editor menu · Drag & drop" width={1280} height={820}>
+                <ChromeWindow width={1280} height={820} url="menusmart.app/borgo/menu/cena/edit"
+                  tabs={[{ title: 'MenuSmart · Modifica Cena' }]}>
+                  <AdminEditor palette={palette} />
+                </ChromeWindow>
+              </DCArtboard>
+
+              <DCArtboard id="create-menu" label="Nuovo menu · Wizard" width={1280} height={820}>
+                <ChromeWindow width={1280} height={820} url="menusmart.app/borgo/menu/nuovo"
+                  tabs={[{ title: 'MenuSmart · Nuovo menu' }]}>
+                  <AdminCreateMenu palette={palette} />
+                </ChromeWindow>
+              </DCArtboard>
+
+              <DCArtboard id="dish-detail" label="Editor · Dettaglio piatto (modale)" width={1280} height={820}>
+                <ChromeWindow width={1280} height={820} url="menusmart.app/borgo/menu/cena/edit"
+                  tabs={[{ title: 'MenuSmart · Tagliolini al tartufo' }]}>
+                  <AdminEditor palette={palette} initialModalDishId="d4" />
+                </ChromeWindow>
+              </DCArtboard>
+
+            </DCSection>
+
+          </DesignCanvas>
+
+          {/* Tweaks panel */}
+          <TweaksPanel title="Tweaks">
+            <TweakSection label="Palette" />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5 }}>
+              {Object.entries(PALETTES).map(([k, p]) => (
+                <button key={k} onClick={() => setTweak('palette', k)}
+                  style={{
+                    padding: '8px 9px', borderRadius: 6, cursor: 'pointer',
+                    background: p.bg, color: p.ink,
+                    border: t.palette === k ? `1.5px solid ${p.accent}` : '1px solid rgba(0,0,0,.08)',
+                    textAlign: 'left', fontFamily: 'inherit', fontSize: 10.5,
+                    display: 'flex', flexDirection: 'column', gap: 5,
+                  }}>
+                  <span style={{ fontWeight: 600 }}>{p.name}</span>
+                  <span style={{ display: 'flex', gap: 3 }}>
+                    {[p.ink, p.accent, p.surface, p.border].map((c, i) => (
+                      <span key={i} style={{ width: 14, height: 14, borderRadius: 3, background: c, border: '0.5px solid rgba(0,0,0,.15)' }}/>
+                    ))}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div style={{
+              marginTop: 10, padding: '10px 11px', borderRadius: 7,
+              background: 'rgba(0,0,0,0.04)', fontSize: 10.5, lineHeight: 1.55, color: 'rgba(41,38,27,.75)',
+            }}>
+              <strong style={{ display: 'block', marginBottom: 4 }}>Esplora il canvas</strong>
+              Pizzica o rotellina per zoom · trascina lo sfondo per spostare · clicca l'icona <span style={{ fontFamily: 'monospace' }}>⤢</span> di un artboard per ingrandirlo.
+            </div>
+          </TweaksPanel>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
